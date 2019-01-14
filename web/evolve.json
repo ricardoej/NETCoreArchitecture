@@ -1,0 +1,6 @@
+{
+    "Evolve.ConnectionString": "Server=127.0.0.1;Port=5432;Database=my_db;User Id=postgres;Password=postgres;",
+    "Evolve.Driver": "npgsql",
+    "Evolve.Locations": "../db/scripts",
+    "Evolve.Command": "migrate"
+}
