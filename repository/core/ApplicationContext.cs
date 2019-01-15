@@ -1,5 +1,5 @@
 using System.Reflection;
-using data;
+using data.core;
 using Microsoft.EntityFrameworkCore;
 
 namespace repository.core
@@ -14,10 +14,10 @@ namespace repository.core
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetAssembly(typeof(Usuario)));
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetAssembly(typeof(BaseEntity)));
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            => optionsBuilder.UseNpgsql("Host=my_host;Database=my_db;Username=my_user;Password=my_pw");
+            => optionsBuilder.UseNpgsql("Server=127.0.0.1;Port=5432;Database=my_db;User Id=postgres;Password=postgres;");
     }
 }

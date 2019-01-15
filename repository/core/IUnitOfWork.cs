@@ -4,7 +4,8 @@ namespace repository.core
 {
     public interface IUnitOfWork
     {
-        IRepository<T> GetRepository<T>() where T: BaseEntity;
+        IRepository<T> GetRepositoryByEntity<T>() where T : BaseEntity;
+        T GetRepository<T>() where T : IRepository;
         void Save();
     }
 }

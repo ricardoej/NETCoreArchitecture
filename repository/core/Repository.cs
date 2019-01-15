@@ -10,7 +10,9 @@ namespace repository.core
     {
         private readonly ApplicationContext context;
         private readonly DbSet<T> entities;
- 
+
+        public DbSet<T> Query => entities;
+
         public Repository(ApplicationContext context)
         {
             this.context = context;
@@ -27,7 +29,7 @@ namespace repository.core
             return entities.SingleOrDefault(s => s.Id == id);
         }
 
-        public void Insert(T entity)
+        public void Create(T entity)
         {
             if (entity == null)
             {
@@ -43,6 +45,8 @@ namespace repository.core
             {
                 throw new ArgumentNullException("entity");
             }
+
+            entities.Update(entity);
         }
  
         public void Delete(T entity)
@@ -53,16 +57,6 @@ namespace repository.core
             }
 
             entities.Remove(entity);
-        }
-
-        public void Remove(T entity)
-        {
-            if (entity == null)
-            {
-                throw new ArgumentNullException("entity");
-            }
-
-            entities.Remove(entity);           
         }
     }
 }
