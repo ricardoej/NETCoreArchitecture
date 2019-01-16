@@ -1,6 +1,6 @@
 using data.core;
 
-namespace data.portalseguranca
+namespace data
 {
     public class Usuario: BaseEntity
     {

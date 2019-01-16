@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace data.portalseguranca.request
+namespace data.request
 {
     public class UsuarioRequest
     {

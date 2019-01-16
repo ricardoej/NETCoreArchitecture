@@ -1,11 +1,11 @@
-﻿using data.portalseguranca;
-using data.portalseguranca.request;
+﻿using data;
+using data.request;
 using repository.core;
 using service.core;
 using System;
 using System.Linq;
 
-namespace service.impl
+namespace service.services.impl
 {
     public class UsuarioService : CRUDService<Usuario>, IUsuarioService
     {

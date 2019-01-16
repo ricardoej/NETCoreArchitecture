@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace data.portalseguranca.map
+namespace data.map
 {
     public class UsuarioMap: IEntityTypeConfiguration<Usuario>
     {

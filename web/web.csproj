@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.8.1" />
     <PackageReference Include="evolve" Version="1.9.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" />

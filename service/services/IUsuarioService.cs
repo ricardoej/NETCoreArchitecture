@@ -1,7 +1,7 @@
-﻿using data.portalseguranca;
+﻿using data;
 using service.core;
 
-namespace service
+namespace service.services
 {
     public interface IUsuarioService: ICRUDService<Usuario>
     {
