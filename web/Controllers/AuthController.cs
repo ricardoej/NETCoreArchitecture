@@ -32,32 +32,39 @@ namespace web.Controllers
         [HttpPost]
         public IActionResult Signin([FromBody]LoginRequest loginRequest)
         {
-            var usuario = usuarioService.Autenticar(loginRequest.Login, loginRequest.Senha);
-
-            if (usuario == null)
-                return BadRequest(new { message = "Username or password is incorrect" });
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
-            var tokenDescriptor = new SecurityTokenDescriptor
+            try
             {
-                Subject = new ClaimsIdentity(new Claim[]
+                var usuario = usuarioService.Autenticar(loginRequest.Login, loginRequest.Senha);
+
+                if (usuario == null)
+                    return BadRequest(new { message = "Login ou senha incorretos" });
+
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+                var tokenDescriptor = new SecurityTokenDescriptor
                 {
+                    Subject = new ClaimsIdentity(new Claim[]
+                    {
                     new Claim(ClaimTypes.Name, usuario.Id.ToString())
-                }),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            var tokenString = tokenHandler.WriteToken(token);
-            
-            return Ok(new
+                    }),
+                    Expires = DateTime.UtcNow.AddDays(7),
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                };
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                var tokenString = tokenHandler.WriteToken(token);
+
+                return Ok(new
+                {
+                    usuario.Id,
+                    usuario.Login,
+                    usuario.Nome,
+                    Token = tokenString
+                });
+            }
+            catch (Exception e)
             {
-                usuario.Id,
-                usuario.Login,
-                usuario.Nome,
-                Token = tokenString
-            });
+                return BadRequest(e);
+            }
         }
     }
 }

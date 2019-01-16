@@ -18,7 +18,8 @@ namespace repository
 
             builder.RegisterAssemblyTypes(assembly)
                 .PublicOnly()
-                .Where(t => t.IsInterface && !t.IsGenericType && t.GetInterfaces().Contains(typeof(IRepository)));
+                .Where(t => t.GetInterfaces().Contains(typeof(IRepository)))
+                .AsImplementedInterfaces().Where(t => !t.IsGenericType);
         }
     }
 }

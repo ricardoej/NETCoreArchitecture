@@ -11,8 +11,7 @@ namespace service
     {
         protected override void Load(ContainerBuilder builder)
         {
-            //RegisterServices(builder);
-            builder.RegisterType<UsuarioService>().As<IUsuarioService>();
+            RegisterServices(builder);
         }
 
         private void RegisterServices(ContainerBuilder builder)
@@ -21,7 +20,8 @@ namespace service
 
             builder.RegisterAssemblyTypes(assembly)
                 .PublicOnly()
-                .Where(t => t.IsInterface && !t.IsGenericType && t.GetInterfaces().Contains(typeof(IService)));
+                .Where(t => t.GetInterfaces().Contains(typeof(IService)))
+                .AsImplementedInterfaces().Where(t => !t.IsGenericType);
         }
     }
 }
