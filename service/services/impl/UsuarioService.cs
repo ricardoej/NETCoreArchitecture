@@ -52,20 +52,21 @@ namespace service.services.impl
             return unitOfWork.GetRepositoryByEntity<Usuario>().Query.Where(u => u.Login == login).FirstOrDefault();
         }
 
-        public void Insert(UsuarioRequest entity, string senha)
+        public void Insert(UsuarioRequest usuarioRequest)
         {
-            if (string.IsNullOrWhiteSpace(senha))
+            if (string.IsNullOrWhiteSpace(usuarioRequest.Senha))
                 throw new Exception("Senha é requerida");
 
-            if (GetByLogin(entity.Login) == null)
-                throw new Exception("Login \"" + entity.Login + "\" já existe");
+            if (GetByLogin(usuarioRequest.Login) != null)
+                throw new Exception("Login \"" + usuarioRequest.Login + "\" já existe");
 
-            CreatePasswordHash(senha, out byte[] senhaHash, out byte[] senhaSalt);
+            CreatePasswordHash(usuarioRequest.Senha, out byte[] senhaHash, out byte[] senhaSalt);
 
             var usuario = new Usuario()
             {
-                Nome = entity.Nome,
-                Login = entity.Login,
+                Nome = usuarioRequest.Nome,
+                Login = usuarioRequest.Login,
+                Email = usuarioRequest.Email,
                 SenhaHash = senhaHash,
                 SenhaSalt = senhaSalt
             };

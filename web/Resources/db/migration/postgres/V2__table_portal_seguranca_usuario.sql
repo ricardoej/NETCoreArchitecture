@@ -4,6 +4,7 @@ CREATE TABLE portal_seguranca.usuario
   id serial NOT NULL,
   nome character varying(50) NOT NULL,
   login character varying(50) NOT NULL,
+  email character varying(50) NOT NULL,
   senha_hash bytea NOT NULL,
   senha_salt bytea NOT NULL,
   CONSTRAINT pk_usuario PRIMARY KEY (id)
@@ -18,6 +19,7 @@ COMMENT ON TABLE portal_seguranca.usuario IS 'Entidade responsável por armazena
 COMMENT ON COLUMN portal_seguranca.usuario.id IS 'Identificador único da entidade.';
 COMMENT ON COLUMN portal_seguranca.usuario.nome IS 'Nome do usuário.';
 COMMENT ON COLUMN portal_seguranca.usuario.login IS 'Login do usuário.';
+COMMENT ON COLUMN portal_seguranca.usuario.email IS 'Email do usuário.';
 COMMENT ON COLUMN portal_seguranca.usuario.senha_hash IS 'Hash senha do usuário.';
 COMMENT ON COLUMN portal_seguranca.usuario.senha_salt IS 'Salt senha do usuário.';
 

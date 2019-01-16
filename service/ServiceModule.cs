@@ -2,6 +2,8 @@
 using service.core;
 using System.Reflection;
 using System.Linq;
+using service.services;
+using service.services.impl;
 
 namespace service
 {
@@ -9,7 +11,8 @@ namespace service
     {
         protected override void Load(ContainerBuilder builder)
         {
-            RegisterServices(builder);
+            //RegisterServices(builder);
+            builder.RegisterType<UsuarioService>().As<IUsuarioService>();
         }
 
         private void RegisterServices(ContainerBuilder builder)

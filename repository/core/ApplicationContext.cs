@@ -16,8 +16,5 @@ namespace repository.core
 
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetAssembly(typeof(BaseEntity)));
         }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            => optionsBuilder.UseNpgsql("Server=127.0.0.1;Port=5432;Database=my_db;User Id=postgres;Password=postgres;");
     }
 }

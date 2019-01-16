@@ -14,7 +14,9 @@ using web.Settings;
 
 namespace web.Controllers
 {
-    [Route("api/auth")]
+    [Produces("application/json")]
+    [Route("api/[controller]/[action]")]
+    [ApiController]
     public class AuthController : Controller
     {
         private readonly IUsuarioService usuarioService;
@@ -27,8 +29,8 @@ namespace web.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("signin")]
-        public IActionResult Authenticate([FromBody]LoginRequest loginRequest)
+        [HttpPost]
+        public IActionResult Signin([FromBody]LoginRequest loginRequest)
         {
             var usuario = usuarioService.Autenticar(loginRequest.Login, loginRequest.Senha);
 

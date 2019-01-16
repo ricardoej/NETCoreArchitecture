@@ -1,8 +1,8 @@
-using Autofac;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -11,11 +11,8 @@ using Microsoft.IdentityModel.Tokens;
 using repository;
 using repository.core;
 using service;
-using service.core;
 using service.services;
 using System;
-using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using web.Settings;
@@ -32,27 +29,23 @@ namespace web
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
-
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddDbContext<ApplicationContext>(optionsAction => optionsAction.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddSingleton<IUnitOfWork, UnitOfWork>();
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
-            
+
             ConfigureJWTAuthentication(services);
 
             var containerBuilder = new ContainerBuilder();
+            containerBuilder.Populate(services);
             containerBuilder.RegisterModule<RepositoryModule>();
             containerBuilder.RegisterModule<ServiceModule>();
-            containerBuilder.Build();
+            var applicationContainer = containerBuilder.Build();
+
+            return new AutofacServiceProvider(applicationContainer);
         }
 
         private void ConfigureJWTAuthentication(IServiceCollection services)
@@ -102,14 +95,10 @@ namespace web
             }
             else
             {
-                app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            app.UseCookiePolicy();
-
             app.UseMvc();
         }
     }

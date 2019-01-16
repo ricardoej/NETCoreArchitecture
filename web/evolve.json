@@ -1,6 +1,6 @@
 {
   "Evolve.ConnectionString": "Server=localhost;Port=5432;User Id=postgres;Password=postgres;Database=gt4w_db;Timeout=1024;CommandTimeout=10000;",
   "Evolve.Driver": "Npgsql",
-  "Evolve.Locations": "../db/migration",
+  "Evolve.Locations": "Resources/db/migration/postgres",
   "Evolve.Command": "migrate"
 }
