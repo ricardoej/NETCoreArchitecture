@@ -7,12 +7,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.IdentityModel.Tokens;
 using repository;
 using repository.core;
 using service;
 using service.services;
+using Swashbuckle.AspNetCore.Swagger;
 using System;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using web.Settings;
@@ -36,7 +39,9 @@ namespace web
             services.AddSingleton<IUnitOfWork, UnitOfWork>();
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            services.Configure<SwaggerSettings>(Configuration.GetSection("Swagger"));
 
+            ConfigureSwagger(services);
             ConfigureJWTAuthentication(services);
 
             var containerBuilder = new ContainerBuilder();
@@ -46,6 +51,31 @@ namespace web
             var applicationContainer = containerBuilder.Build();
 
             return new AutofacServiceProvider(applicationContainer);
+        }
+
+        private void ConfigureSwagger(IServiceCollection services)
+        {
+            var swaggerSettings = Configuration.GetSection("Swagger").Get<SwaggerSettings>();
+            // Configurando o serviço de documentação do Swagger
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc(swaggerSettings.Version,
+                    new Info
+                    {
+                        Title = swaggerSettings.Title,
+                        Version = swaggerSettings.Version,
+                        Description = swaggerSettings.Description
+                    });
+
+                string caminhoAplicacao =
+                    PlatformServices.Default.Application.ApplicationBasePath;
+                string nomeAplicacao =
+                    PlatformServices.Default.Application.ApplicationName;
+                string caminhoXmlDoc =
+                    Path.Combine(caminhoAplicacao, $"{nomeAplicacao}.xml");
+
+                c.IncludeXmlComments(caminhoXmlDoc);
+            });
         }
 
         private void ConfigureJWTAuthentication(IServiceCollection services)
@@ -100,6 +130,20 @@ namespace web
 
             app.UseHttpsRedirection();
             app.UseMvc();
+
+            var swaggerSettings = Configuration.GetSection("Swagger").Get<SwaggerSettings>();
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", swaggerSettings.Title);
+                c.RoutePrefix = string.Empty;
+                c.DocumentTitle = swaggerSettings.Title;
+            });
         }
     }
 }
