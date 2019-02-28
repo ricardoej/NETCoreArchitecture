@@ -1,5 +1,8 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using domain.core;
+using domain.repositories;
+using domain.services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,11 +14,11 @@ using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.IdentityModel.Tokens;
 using repository;
 using repository.core;
-using service;
-using service.services;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using web.Settings;
@@ -36,7 +39,6 @@ namespace web
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddDbContext<ApplicationContext>(optionsAction => optionsAction.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddSingleton<IUnitOfWork, UnitOfWork>();
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.Configure<SwaggerSettings>(Configuration.GetSection("Swagger"));
@@ -46,11 +48,24 @@ namespace web
 
             var containerBuilder = new ContainerBuilder();
             containerBuilder.Populate(services);
-            containerBuilder.RegisterModule<RepositoryModule>();
-            containerBuilder.RegisterModule<ServiceModule>();
+
+            RegisterServices(containerBuilder);
+            RegisterRepositories(containerBuilder);
+
             var applicationContainer = containerBuilder.Build();
 
             return new AutofacServiceProvider(applicationContainer);
+        }
+
+        private void RegisterServices(ContainerBuilder containerBuilder)
+        {
+            containerBuilder.RegisterType<AutenticarUsuarioService>();
+            containerBuilder.RegisterType<InserirUsuarioService>();
+        }
+
+        private void RegisterRepositories(ContainerBuilder containerBuilder)
+        {
+            containerBuilder.RegisterType<UsuarioRepository>().As<IUsuarioRepository>();
         }
 
         private void ConfigureSwagger(IServiceCollection services)
@@ -93,7 +108,7 @@ namespace web
                 {
                     OnTokenValidated = context =>
                     {
-                        var userService = context.HttpContext.RequestServices.GetRequiredService<IUsuarioService>();
+                        var userService = context.HttpContext.RequestServices.GetRequiredService<UsuarioRepository>();
                         var userId = int.Parse(context.Principal.Identity.Name);
                         var user = userService.Get(userId);
                         if (user == null)

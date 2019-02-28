@@ -10,7 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
@@ -24,9 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\data\data.csproj" />
+    <ProjectReference Include="..\domain\domain.csproj" />
     <ProjectReference Include="..\repository\repository.csproj" />
-    <ProjectReference Include="..\service\service.csproj" />
   </ItemGroup>
 
   <ItemGroup>

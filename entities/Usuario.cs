@@ -1,6 +1,6 @@
-using data.core;
+using entities.core;
 
-namespace data
+namespace entities
 {
     public class Usuario: BaseEntity
     {

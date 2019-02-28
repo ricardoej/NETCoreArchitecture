@@ -1,4 +1,4 @@
-namespace data.core
+namespace entities.core
 {
     public abstract class BaseEntity
     {

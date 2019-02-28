@@ -1,6 +1,5 @@
-using System.Reflection;
-using data.core;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace repository.core
 {
@@ -14,7 +13,7 @@ namespace repository.core
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetAssembly(typeof(BaseEntity)));
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
     }
 }

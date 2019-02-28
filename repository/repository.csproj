@@ -5,16 +5,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="repositories\**" />
+    <EmbeddedResource Remove="repositories\**" />
+    <None Remove="repositories\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Autofac" Version="4.8.1" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\data\data.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="repositories\impl\" />
+    <ProjectReference Include="..\domain\domain.csproj" />
+    <ProjectReference Include="..\entities\entities.csproj" />
   </ItemGroup>
 
 </Project>

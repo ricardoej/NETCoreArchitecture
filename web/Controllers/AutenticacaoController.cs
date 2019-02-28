@@ -1,9 +1,10 @@
-﻿using data.request;
+﻿using domain.request;
+using domain.services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using service.services;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -17,26 +18,26 @@ namespace web.Controllers
     [Produces("application/json")]
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class AuthController : Controller
+    public class AutenticacaoController : Controller
     {
-        private readonly IUsuarioService usuarioService;
+        private readonly AutenticarUsuarioService autenticarUsuarioService;
         private readonly AppSettings appSettings;
 
-        public AuthController(IUsuarioService usuarioService, IOptions<AppSettings> appSettings)
+        public AutenticacaoController(AutenticarUsuarioService autenticarUsuarioService, IOptions<AppSettings> appSettings)
         {
-            this.usuarioService = usuarioService;
+            this.autenticarUsuarioService = autenticarUsuarioService;
             this.appSettings = appSettings.Value;
         }
 
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult Signin([FromBody]LoginRequest loginRequest)
+        public IActionResult Login([FromBody]AutenticarRequest request)
         {
             try
             {
-                var usuario = usuarioService.Autenticar(loginRequest.Login, loginRequest.Senha);
+                var resposta = autenticarUsuarioService.Executar(request);
 
-                if (usuario == null)
+                if (!resposta.IsLogado)
                     return BadRequest(new { message = "Login ou senha incorretos" });
 
                 var tokenHandler = new JwtSecurityTokenHandler();
@@ -45,7 +46,7 @@ namespace web.Controllers
                 {
                     Subject = new ClaimsIdentity(new Claim[]
                     {
-                    new Claim(ClaimTypes.Name, usuario.Id.ToString())
+                        new Claim(ClaimTypes.Name, resposta.Usuario.Id.ToString())
                     }),
                     Expires = DateTime.UtcNow.AddDays(7),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -55,15 +56,15 @@ namespace web.Controllers
 
                 return Ok(new
                 {
-                    usuario.Id,
-                    usuario.Login,
-                    usuario.Nome,
+                    resposta.Usuario.Id,
+                    resposta.Usuario.Login,
+                    resposta.Usuario.Nome,
                     Token = tokenString
                 });
             }
-            catch (Exception e)
+            catch
             {
-                return BadRequest(e);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
     }

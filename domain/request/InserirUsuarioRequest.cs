@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace data.request
+﻿namespace domain.request
 {
-    public class UsuarioRequest
+    public class InserirUsuarioRequest
     {
         public string Nome { get; set; }
         public string Login { get; set; }
